@@ -43,7 +43,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           prerelease: false
-          tag_name: ${{GITHUB_SHA}}
+          tag_name: ${{GITHUB.SHA}}
           name: Build
           files: 
             out/*
