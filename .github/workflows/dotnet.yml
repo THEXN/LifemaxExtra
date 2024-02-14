@@ -31,7 +31,6 @@ jobs:
         run: 
           rm -rf out/*.json
           rm -rf out/HttpServer.dll
-          echo "TAG_NAME=$(git rev-list --count HEAD)" >> $env:GITHUB_OUTPUT
       - name: Upload Plugin
         uses: actions/upload-artifact@v3
         with:
@@ -43,8 +42,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           prerelease: true
-          tag_name: v${{ steps.setenvo.outputs.TAG_NAME }}
-          target_commitish: ${{ github.sha }}
+          tag_name: $(git rev-parse --short HEAD)
           name: Build
           files: 
             out/*
