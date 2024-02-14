@@ -39,7 +39,7 @@ jobs:
         with:
           prerelease: false
           tag_name: Pre-Release
-          name: ${{GITHUB_SHA}}
+          name: $GITHUB_SHA
           files: 
             out/*.dll
             out/*.pdb
