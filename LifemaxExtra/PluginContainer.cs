@@ -63,16 +63,15 @@ namespace LifemaxExtra
             {
                 // 将生命值设置为配置的最大值
                 tplayer.statLifeMax = Config.LifeFruitMaxLife;
-                tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                tsplayer.SendData(PacketTypes.PlayerHp, "", index, 0f, 0f, 0f, 0);
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (disposing)
             {
                 PlayerHooks.PlayerPostLogin -= OnPlayerPostLogin;
-                this.disposed = true;
                 ServerApi.Hooks.GameUpdate.Deregister(this, new HookHandler<EventArgs>(this.OnUpdate));
             }
             base.Dispose(disposing);
@@ -103,17 +102,17 @@ namespace LifemaxExtra
                                     if(tsplayer.TPlayer.statLifeMax < Config.LifeFruitMaxLife)
                                     {
                                         tsplayer.TPlayer.inventory[tsplayer.TPlayer.selectedItem].stack--;
-                                        tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
+                                        tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
                                         tplayer.statLifeMax += 5;
-                                        tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                        tsplayer.SendData(PacketTypes.PlayerHp, "", index, 0f, 0f, 0f, 0);
 
                                     }
                                     if (tsplayer.TPlayer.statLifeMax > Config.LifeFruitMaxLife)
                                     {
                                         tsplayer.TPlayer.inventory[tsplayer.TPlayer.selectedItem].stack--;
-                                        tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
+                                        tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
                                         tplayer.statLifeMax = Config.LifeFruitMaxLife;
-                                        tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                        tsplayer.SendData(PacketTypes.PlayerHp, "", index, 0f, 0f, 0f, 0);
                                     }
                                 }
                             }
@@ -125,16 +124,16 @@ namespace LifemaxExtra
                                 if(tsplayer.TPlayer.statLifeMax < Config.LifeCrystalMaxLife)
                                 {
                                     tsplayer.TPlayer.inventory[tplayer.selectedItem].stack--;
-                                    tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
+                                    tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
                                     tplayer.statLifeMax += 20;
-                                    tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                    tsplayer.SendData(PacketTypes.PlayerHp, "", index, 0f, 0f, 0f, 0);
                                 }
                                 else if(tsplayer.TPlayer.statLifeMax > Config.LifeCrystalMaxLife && tsplayer.TPlayer.statLifeMax < Config.LifeFruitMaxLife)
                                 {
                                     tsplayer.TPlayer.inventory[tsplayer.TPlayer.selectedItem].stack--;
-                                    tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
+                                    tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
                                     tplayer.statLifeMax = Config.LifeCrystalMaxLife;
-                                    tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                    tsplayer.SendData(PacketTypes.PlayerHp, "", index, 0f, 0f, 0f, 0);
                                 }
                             }
                         }
@@ -144,7 +143,6 @@ namespace LifemaxExtra
             }
         }
 
-        private bool disposed;
 
         private bool[] controlUseItemOld;
 
