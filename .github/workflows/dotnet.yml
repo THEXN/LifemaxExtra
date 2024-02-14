@@ -38,8 +38,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           prerelease: false
-          tag_name: $GITHUB_SHA
+          tag_name: ${GITHUB_SHA}
           name: Build
           files: 
-            out/*.dll
-            out/*.pdb
+            out/*
