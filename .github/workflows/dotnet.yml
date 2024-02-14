@@ -23,21 +23,21 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.100'
-
+      
       - name: Build the solution
-        run: dotnet build -c Release
+        run: dotnet build -c Release --output out/
              
-      - name: Upload Artifact
+      - name: Upload Plugin
         uses: actions/upload-artifact@v3
         with:
-          name: Upload
-          path: /bin/Release/net6.0/*
+          name: Plugin
+          path: out/*
         
       - name: Prepare Artifact
         id: pa
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: 
-          zip -r Build.zip /bin/Release/net6.0/*
+          zip -r Plugin.zip out/*
       
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -46,4 +46,4 @@ jobs:
           prerelease: false
           tag_name: Pre-Release
           name: Release
-          files: Build.zip
+          files: Plugin.zip
