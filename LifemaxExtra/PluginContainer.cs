@@ -71,6 +71,7 @@ namespace LifemaxExtra
         {
             if (disposing)
             {
+                GeneralHooks.ReloadEvent -= ReloadConfig;
                 PlayerHooks.PlayerPostLogin -= OnPlayerPostLogin;
                 ServerApi.Hooks.GameUpdate.Deregister(this, new HookHandler<EventArgs>(this.OnUpdate));
             }
