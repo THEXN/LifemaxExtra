@@ -26,6 +26,11 @@ jobs:
       
       - name: Build the solution
         run: dotnet build -c Release --output out/
+
+      - name: Prepare Upload
+        run: 
+          rm -rf out/*.json
+          rm -rf out/HttpServer.dll
              
       - name: Upload Plugin
         uses: actions/upload-artifact@v3
@@ -38,7 +43,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
           prerelease: false
-          tag_name: ${GITHUB_SHA}
+          tag_name: ${{GITHUB_SHA}}
           name: Build
           files: 
             out/*
