@@ -32,12 +32,6 @@ jobs:
         with:
           name: Plugin
           path: out/*
-        
-      - name: Prepare Artifact
-        id: pa
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-        run: 
-          zip -r Plugin.zip out/*
       
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -45,5 +39,7 @@ jobs:
         with:
           prerelease: false
           tag_name: Pre-Release
-          name: Release
-          files: Plugin.zip
+          name: ${GITHUB_SHA}
+          files: 
+            out/*.dll
+            out/*.pdb
