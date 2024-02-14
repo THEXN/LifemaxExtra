@@ -23,6 +23,11 @@ jobs:
       - uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '6.0.100'
+      - name: Set custom tag name
+        run: |
+          SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          echo "SHORT_SHA=$SHA" >> $GITHUB_ENV
+        shell: bash
       
       - name: Build the solution
         run: dotnet build -c Release --output out/
@@ -40,9 +45,11 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        env:
+          SHORT_SHA: ${{ env.SHORT_SHA }}
         with:
           prerelease: true
-          tag_name: $(git rev-parse --short HEAD)
+          tag_name: ${{ env.SHORT_SHA }}
           name: Build
           files: 
             out/*
