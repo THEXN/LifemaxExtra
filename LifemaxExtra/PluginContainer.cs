@@ -6,19 +6,15 @@ using TShockAPI.Hooks;
 namespace LifemaxExtra
 {
     [ApiVersion(2, 1)]
-
     public class LifemaxExtra : TerrariaPlugin
     {
         public override string Author => "佚名，肝帝熙恩添加自定义";
         public override string Description => "提升生命值上限";
         public override string Name => "LifemaxExtra";
-        public override Version Version => new Version(1, 0, 0, 2);
-
-
+        public override Version Version => new Version(1, 0, 0, 3);
         public static Configuration Config;
         private bool[] controlUseItemOld;
         private int[] itemUseTime;
-
 
         public LifemaxExtra(Main game) : base(game)
         {
