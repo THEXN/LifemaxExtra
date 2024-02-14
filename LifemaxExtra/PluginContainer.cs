@@ -13,7 +13,13 @@ namespace LifemaxExtra
         public override string Description => "提升生命值上限";
         public override string Name => "LifemaxExtra";
         public override Version Version => new Version(1, 0, 0, 2);
+
+
         public static Configuration Config;
+        private bool[] controlUseItemOld;
+        private int[] itemUseTime;
+
+
         public LifemaxExtra(Main game) : base(game)
         {
             LoadConfig();
@@ -27,17 +33,29 @@ namespace LifemaxExtra
             Config.Write(Configuration.FilePath);
 
         }
-        private static void ReloadConfig(ReloadEventArgs args)
-        {
-            LoadConfig();
-            args.Player?.SendSuccessMessage("[{0}] 重新加载配置完毕。", typeof(LifemaxExtra).Name);
-        }
 
         public override void Initialize()
         {
             GeneralHooks.ReloadEvent += ReloadConfig;
             ServerApi.Hooks.GameUpdate.Register(this, new HookHandler<EventArgs>(this.OnUpdate));
             PlayerHooks.PlayerPostLogin += OnPlayerPostLogin;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                GeneralHooks.ReloadEvent -= ReloadConfig;
+                PlayerHooks.PlayerPostLogin -= OnPlayerPostLogin;
+                ServerApi.Hooks.GameUpdate.Deregister(this, new HookHandler<EventArgs>(this.OnUpdate));
+            }
+            base.Dispose(disposing);
+        }
+
+        private static void ReloadConfig(ReloadEventArgs args)
+        {
+            LoadConfig();
+            args.Player?.SendSuccessMessage("[{0}] 重新加载配置完毕。", typeof(LifemaxExtra).Name);
         }
 
         private void OnPlayerPostLogin(PlayerPostLoginEventArgs args)
@@ -52,32 +70,19 @@ namespace LifemaxExtra
             }
         }
 
-
         private static void CheckAndSetPlayerHealth(TSPlayer tsplayer)
         {
             int index = tsplayer.Index;
             Player tplayer = tsplayer.TPlayer;
 
             // 如果生命上限大于配置的最大值
-            if (tplayer.statLifeMax > Config.使用生命果最高可提升至)
+            if (tplayer.statLifeMax > Config.LifeFruitMaxLife)
             {
                 // 将生命值设置为配置的最大值
-                tplayer.statLifeMax = Config.使用生命果最高可提升至;
-                tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                tplayer.statLifeMax = Config.LifeFruitMaxLife;
+                tsplayer.SendData(PacketTypes.PlayerHp, "", index);
             }
         }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (!this.disposed)
-            {
-                PlayerHooks.PlayerPostLogin -= OnPlayerPostLogin;
-                this.disposed = true;
-                ServerApi.Hooks.GameUpdate.Deregister(this, new HookHandler<EventArgs>(this.OnUpdate));
-            }
-            base.Dispose(disposing);
-        }
-
 
         private void OnUpdate(EventArgs args)
         {
@@ -98,22 +103,22 @@ namespace LifemaxExtra
                         {
                             if (type == 1291)
                             {
-                                if (tplayer.statLifeMax >= Config.使用生命水晶最高可提升至)
+                                if (tplayer.statLifeMax >= Config.LifeCrystalMaxLife)
                                 {
-                                    if(tsplayer.TPlayer.statLifeMax < Config.使用生命果最高可提升至)
+                                    if(tsplayer.TPlayer.statLifeMax < Config.LifeFruitMaxLife)
                                     {
                                         tsplayer.TPlayer.inventory[tsplayer.TPlayer.selectedItem].stack--;
-                                        tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
+                                        tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem);
                                         tplayer.statLifeMax += 5;
-                                        tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                        tsplayer.SendData(PacketTypes.PlayerHp, "", index);
 
                                     }
-                                    if (tsplayer.TPlayer.statLifeMax > Config.使用生命果最高可提升至)
+                                    if (tsplayer.TPlayer.statLifeMax > Config.LifeFruitMaxLife)
                                     {
                                         tsplayer.TPlayer.inventory[tsplayer.TPlayer.selectedItem].stack--;
-                                        tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
-                                        tplayer.statLifeMax = Config.使用生命果最高可提升至;
-                                        tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                        tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem);
+                                        tplayer.statLifeMax = Config.LifeFruitMaxLife;
+                                        tsplayer.SendData(PacketTypes.PlayerHp, "", index);
                                     }
                                 }
                             }
@@ -122,19 +127,19 @@ namespace LifemaxExtra
                         {
                             if (tplayer.statLifeMax >= 400)
                             {
-                                if(tsplayer.TPlayer.statLifeMax < Config.使用生命水晶最高可提升至)
+                                if(tsplayer.TPlayer.statLifeMax < Config.LifeCrystalMaxLife)
                                 {
                                     tsplayer.TPlayer.inventory[tplayer.selectedItem].stack--;
-                                    tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
+                                    tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem);
                                     tplayer.statLifeMax += 20;
-                                    tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                    tsplayer.SendData(PacketTypes.PlayerHp, "", index);
                                 }
-                                else if(tsplayer.TPlayer.statLifeMax > Config.使用生命水晶最高可提升至 && tsplayer.TPlayer.statLifeMax < Config.使用生命果最高可提升至)
+                                else if(tsplayer.TPlayer.statLifeMax > Config.LifeCrystalMaxLife && tsplayer.TPlayer.statLifeMax < Config.LifeFruitMaxLife)
                                 {
                                     tsplayer.TPlayer.inventory[tsplayer.TPlayer.selectedItem].stack--;
-                                    tsplayer.SendData((PacketTypes)5, "", index, (float)tplayer.selectedItem, 0f, 0f, 0);
-                                    tplayer.statLifeMax = Config.使用生命水晶最高可提升至;
-                                    tsplayer.SendData((PacketTypes)16, "", index, 0f, 0f, 0f, 0);
+                                    tsplayer.SendData(PacketTypes.PlayerSlot, "", index, (float)tplayer.selectedItem);
+                                    tplayer.statLifeMax = Config.LifeCrystalMaxLife;
+                                    tsplayer.SendData(PacketTypes.PlayerHp, "", index);
                                 }
                             }
                         }
@@ -143,11 +148,5 @@ namespace LifemaxExtra
                 }
             }
         }
-
-        private bool disposed;
-
-        private bool[] controlUseItemOld;
-
-        private int[] itemUseTime;
     }
 }
