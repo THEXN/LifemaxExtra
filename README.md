@@ -18,7 +18,7 @@ The structure of the configuration file is as follows:
 ## Usage
 After setting the maximum health values in the configuration file, the plugin will automatically adjust the player's health when they use Life Crystals or Life Fruit, and it will check and set the health upon player login.
 ## Developer Information
-- **Author**: Anonymous, custom settings added by Xi'en, the liver emperor
+- **Author**: Anonymous, custom settings added by Xi'en（THEXN）, the liver emperor
 ## Support and Feedback
 If you encounter any issues or have any suggestions while using the plugin, please feel free to raise them in the official forums or community issues section.
 - GitHub Repository: https://github.com/THEXN/LifemaxExtra
